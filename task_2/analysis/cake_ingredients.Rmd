@@ -1,0 +1,52 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(here) 
+cake <- read_csv(here("clean_data/cake_clean.csv"))
+```
+
+# Q1
+```{r}
+cake %>%
+  filter(ingredient == "Cocoa") %>%
+  arrange(desc(amount))
+```
+
+# Q2
+```{r}
+cake %>%
+  filter(cake == "Sponge") %>%
+  filter(measure == "cup") %>%
+  summarise(cups = sum(amount))
+```
+
+
+# Q3
+```{r}
+cake %>%
+  filter(measure == "teaspoon") %>%
+  summarise(n_distinct(ingredient))
+```
+
+
+# Q4
+```{r}
+cake %>%
+  group_by(cake) %>%
+  summarise(ingredient_amount = n()) %>%
+  arrange(desc(ingredient_amount))
+```
+
+# Q5
+```{r}
+cake %>%
+  group_by(ingredient) %>%
+  summarise(n_cakes = n()) %>% 
+  filter(n_cakes == 1)
+```
+

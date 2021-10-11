@@ -1,0 +1,79 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(here)
+
+candy <- read_csv(here("clean_data/candy_clean.csv"),
+  col_types = cols(gender = col_character(), country = col_character()))
+```
+
+#Q1
+```{r}
+candy %>%
+  filter(!is.na(rating)) %>%
+  nrow()
+```
+
+#Q2
+```{r}
+candy %>%
+  group_by(going_out) %>%
+  summarise(age = mean(age, na.rm = TRUE))
+```
+
+
+# Q3
+
+```{r}
+candy %>%
+  filter(!is.na(rating)) %>%
+  group_by(rating, candy) %>%
+  summarise(count = n()) %>%
+  filter(count == max(count))
+```
+
+# Q4
+```{r}
+candy %>%
+  filter(candy == "starburst") %>%
+  filter(rating == "despair") %>%
+  summarise(number = n_distinct(person_id))
+```
+
+
+
+#Q5
+```{r}
+candy <-
+  candy %>%
+  mutate(rating_numeric = recode(rating, joy = 1, despair = -1, meh = 0))
+
+candy %>%
+  group_by(gender, candy) %>%
+  summarise(avg_rating = mean(rating_numeric, na.rm = TRUE)) %>%
+  filter(avg_rating == max(avg_rating))
+```
+
+#Q6
+```{r}
+candy %>%
+  group_by(year, candy) %>%
+  summarise(avg_rating = mean(rating_numeric, na.rm = TRUE)) %>%
+  filter(avg_rating == max(avg_rating))
+```
+
+
+#Q7
+```{r}
+candy %>%
+  mutate(country = if_else(country %in% c("united states", "canada", "united kingdom"), country, "other")) %>%
+  group_by(country, candy) %>%
+  summarise(rating = mean(rating_numeric, na.rm = TRUE)) %>%
+  filter(rating == max(rating))
+```
+
